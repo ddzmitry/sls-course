@@ -1,0 +1,43 @@
+service:
+  name: auction-service
+
+plugins:
+  - serverless-bundle
+  - serverless-pseudo-parameters
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 256
+  stage: ${opt:stage, 'dev'}
+  region: "us-east-1"
+  environment:
+    # Pass to the javascript code the value of the table 
+    # serverless-pseudo-parameters allows to do templating 
+    AUCTIONS_TABLE_NAME: ${self:custom.AuctionsTable.name}
+  # IAM role statememnts to allow to write in DB
+  iamRoleStatements:
+    - ${file(iam/AuctionsTableIAM.yml):AuctionsTableIAM}
+
+resources:
+  Resources:
+    # Resource for the table 
+    AuctionsTable: ${file(resources/AuctionsTable.yml):AuctionsTable}
+
+functions:
+  createAuction:
+    handler: src/handlers/createAuction.handler
+    events:
+      - http:
+          method: POST
+          path: /auction
+
+custom:
+    #  Get name https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dynamodb-table.html
+  AuctionsTable:
+    # Get name of the table 
+    name: !Ref AuctionsTable
+    #  Get arn of the table
+    arn: !GetAtt AuctionsTable.Arn  
+  bundle:
+    linting: false
