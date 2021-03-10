@@ -7,14 +7,20 @@ import { getAuctionById } from "./getAuction";
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
-async function placeBid(event, context) {
+import validator from "@middy/validator";
+import createBidSchema from "../lib/schemas/createBidSchema";
 
+async function placeBid(event, context) {
   //   console.log(event);
   const { id } = event.pathParameters;
-  const { amount } = JSON.parse(event.body);
+  // we use validator no Json parse needed 
+  const { amount } = event.body;
 
   const auction = await getAuctionById(id);
 
+  if (auction.status !== "OPEN") {
+    throw new createError.Forbidden(`You can't bid on CLOSED auciton`);
+  }
   if (amount <= auction.highestBid.amount) {
     throw new createError.Forbidden(
       `Your bid must be higher than ${auction.highestBid.amount} `
@@ -50,4 +56,8 @@ async function placeBid(event, context) {
   };
 }
 // apply middleware
-export const handler = commonMiddleware(placeBid);
+export const handler = commonMiddleware(placeBid).use(
+  validator({
+    inputSchema: createBidSchema,
+  })
+);

@@ -4,6 +4,9 @@ AuctionsTableIAM:
     - dynamodb:PutItem
     - dynamodb:Scan
     - dynamodb:GetItem
-    - dynamodb:UpdateItem    
+    - dynamodb:UpdateItem
+    - dynamodb:Query            
   Resource:
     - ${self:custom.AuctionsTable.arn}
+    # Join function with delimeter Join ['/'. ['a','b','c']] => a/b/c
+    - !Join ['/',[ '${self:custom.AuctionsTable.arn}' , 'index' , 'statusAndEndDate'  ]]

@@ -42,7 +42,9 @@ async function getAuction(event, context) {
   };
 }
 // apply middleware
-export const handler = commonMiddleware(getAuction);
+export const handler = commonMiddleware(getAuction)
+// add validation layer
+
 // .use(httpJsonBodyParser()) // Parse string body
 // .use(httpEventNormalizer()) // adjust gatway event object
 // .use(httpErrorHandler()); // smothes error handling
