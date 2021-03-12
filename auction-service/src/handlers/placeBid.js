@@ -56,8 +56,4 @@ async function placeBid(event, context) {
   };
 }
 // apply middleware
-export const handler = commonMiddleware(placeBid).use(
-  validator({
-    inputSchema: createBidSchema,
-  })
-);
+export const handler = commonMiddleware(placeBid).use(validator({ inputSchema: createBidSchema }));
