@@ -58,3 +58,17 @@ npm install @middy/validator
 can provide default schema to the request object 
 https://json-schema.org/
 ```
+
+> Curl for Auth0
+```
+curl --location --request POST 'https://ddzmitry.auth0.com/oauth/token' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'client_id=EhzHpkuI0842QP78hHXI2HtoSaeL4nYm' \
+--data-urlencode 'username=ddzmitry@yahoo.com' \
+--data-urlencode 'password=Kainer2305!' \
+--data-urlencode 'grant_type=password' \
+--data-urlencode 'scope=openid'
+
+{"access_token":"U8Z9femkVpvWSp6ZPva_M9ZpMBeeAKKZ","id_token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlFUQXhORU13TXpFek5FRkdPVVV6UWtWRFJqRTNNREU1TWtVd016RkVOamhCTmpFM01rSTNOQSJ9.eyJuaWNrbmFtZSI6ImRkem1pdHJ5IiwibmFtZSI6ImRkem1pdHJ5QHlhaG9vLmNvbSIsInBpY3R1cmUiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci82MDQyNWVmYmYyNzg5MzRkODA5NTU0Y2U5Nzk1MmI3MT9zPTQ4MCZyPXBnJmQ9aHR0cHMlM0ElMkYlMkZjZG4uYXV0aDAuY29tJTJGYXZhdGFycyUyRmRkLnBuZyIsInVwZGF0ZWRfYXQiOiIyMDIxLTAzLTEyVDAxOjM0OjI5LjMwNVoiLCJlbWFpbCI6ImRkem1pdHJ5QHlhaG9vLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiaXNzIjoiaHR0cHM6Ly9kZHptaXRyeS5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjA0YWM0OGZjNDgxM2QwMDcwOWFlMTI0IiwiYXVkIjoiRWh6SHBrdUkwODQyUVA3OGhIWEkySHRvU2FlTDRuWW0iLCJpYXQiOjE2MTU1MTI4NjksImV4cCI6MTYxNTU0ODg2OX0.wrhAvIyoTD2InWF9cnjFiTz-xR9nu8juDgSre6frUQV9YEISbh6t4ApiiVSEH7dqZxnwEPE0HCs2IOm3Z1-z7K45acYlOr87JpXTY_CwbGoLoLvaxPSWzhAyfgoVrIQXY3O_bgRsFmJ3f2vaQ-yfZaB0GKfmuDbi4_S3rKXmVLVx1uJywWoSdx-RKPjtabFKFMBJ7fEl9U1ebCiwNUKkT2zf7Qhgb6GzPOLShiSUfsBSBu-MUdJlwLZAGlOz3y5Q6L1EYsLllMwOeEUbFXhT3ObMKxa_VEV2QiNpuH_mh8KI5jVnnasLzvWMBo1uVdkynYUoS7J17eTdT7By-LX_xA","scope":"openid profile email address phone","expires_in":86400,"token_type":"Bearer"}%
+
+```
