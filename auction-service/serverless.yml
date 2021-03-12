@@ -31,24 +31,33 @@ functions:
       - http:
           method: POST
           path: /auction
+          # ARN of the service that authorizes 
+          authorizer: ${self:custom.authorizer}
+
   getAuctions:
     handler: src/handlers/getAuctions.handler
     events:
       - http:
           method: GET
           path: /auctions
+          authorizer: ${self:custom.authorizer}
+
   getAuction:
     handler: src/handlers/getAuction.handler
     events:
       - http:
           method: GET
           path: /auction/{id}
+          authorizer: ${self:custom.authorizer}
+
   placeBid:
     handler: src/handlers/placeBid.handler
     events:
       - http:
           method: PATCH
           path: /auction/{id}/bid
+          authorizer: ${self:custom.authorizer}
+          
   processAuctions:
     handler: src/handlers/processAuctions.handler
     #events:
@@ -58,6 +67,7 @@ functions:
           
 
 custom:
+  authorizer: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:auth-service-${self:provider.stage}-auth
     #  Get name https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dynamodb-table.html
   AuctionsTable:
     # Get name of the table 
