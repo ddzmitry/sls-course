@@ -45,6 +45,7 @@ functions:
       - http:
           method: POST
           path: /auction
+          cors: true #enable cors for front end 
           # ARN of the service that authorizes 
           authorizer: ${self:custom.authorizer}
 
@@ -54,6 +55,7 @@ functions:
       - http:
           method: GET
           path: /auctions
+          cors: true #enable cors for front end 
           authorizer: ${self:custom.authorizer}
 
   getAuction:
@@ -62,6 +64,7 @@ functions:
       - http:
           method: GET
           path: /auction/{id}
+          cors: true #enable cors for front end 
           authorizer: ${self:custom.authorizer}
   
   placeBid:
@@ -70,6 +73,7 @@ functions:
       - http:
           method: PATCH
           path: /auction/{id}/bid
+          cors: true #enable cors for front end 
           authorizer: ${self:custom.authorizer}
   
   processAuctions:
@@ -83,6 +87,7 @@ functions:
     events:
       - http:
           method: PATCH
+          cors: true #enable cors for front end 
           path: /auction/{id}/picture
           authorizer: ${self:custom.authorizer}
   

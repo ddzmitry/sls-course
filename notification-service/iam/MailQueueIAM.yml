@@ -1,0 +1,6 @@
+MailQueueIAM:
+  Effect: Allow
+  Action:
+    - sqs:RecieveMessage
+  # add IAM to resource mailQueue arn   
+  Resource: ${self:custom.mailQueue.arn}  

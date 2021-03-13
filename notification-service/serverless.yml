@@ -1,0 +1,43 @@
+service:
+  name: notification-service
+
+plugins:
+  - serverless-bundle
+  - serverless-pseudo-parameters
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 256
+  region: 'us-east-1'
+  stage: ${opt:stage, 'dev'}
+  iamRoleStatements:
+    - ${file(iam/SendMailIAM.yml):SendMailIAM}
+
+resources:
+  Resources:
+  # by adding to resiurces we can get arn of the object 
+  #logical name is avaliable 
+    MailQueue: ${file(resources/MailQueue.yml):MailQueue}
+  # Adding Outputs 
+  Outputs:
+    MailQueueArn: ${file(resources/MailQueue.yml):Outputs.MailQueueArn}
+    MailQueueUrl: ${file(resources/MailQueue.yml):Outputs.MailQueueUrl}
+  
+functions:
+  sendMail:
+    handler: src/handlers/sendMail.handler
+    events:
+      - sqs:
+          arn: ${self:custom.mailQueue.arn}
+          #  One message at the time 
+          batchSize: 1
+
+custom:
+  mailQueue:
+    name: MailQueue-${self:provider.stage}
+    arn: !GetAtt MailQueue.Arn
+    # Return value from sqs is url
+    url: !Ref MailQueue
+  bundle:
+    linting: false          
