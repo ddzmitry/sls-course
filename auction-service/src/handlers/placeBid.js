@@ -15,12 +15,24 @@ async function placeBid(event, context) {
   const { id } = event.pathParameters;
   // we use validator no Json parse needed 
   const { amount } = event.body;
+  // get info  about the user 
+  const { email } = event.requestContext.authorizer;
 
   const auction = await getAuctionById(id);
+  // Bid Identity
+  if(email == auction.seller){
+    throw new createError.Forbidden(`You can't bid on your own aucitons`);
+  }
+  // Double bitting
+  // if(email == auction.bidder){
+  //   throw new createError.Forbidden(`You are already the highest bidder`);
+  // }
 
+  // Auctuion status validation
   if (auction.status !== "OPEN") {
     throw new createError.Forbidden(`You can't bid on CLOSED auciton`);
   }
+  // Validate the ammount 
   if (amount <= auction.highestBid.amount) {
     throw new createError.Forbidden(
       `Your bid must be higher than ${auction.highestBid.amount} `
@@ -30,10 +42,11 @@ async function placeBid(event, context) {
   const params = {
     TableName: process.env.AUCTIONS_TABLE_NAME,
     Key: { id },
-    UpdateExpression: "set highestBid.amount = :amount",
+    UpdateExpression: "set highestBid.amount = :amount, highestBid.bidder = :bidder",
     // update value by passing values
     ExpressionAttributeValues: {
       ":amount": amount,
+      ":bidder":email,
     },
     ReturnValues: "ALL_NEW",
   };

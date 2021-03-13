@@ -15,6 +15,9 @@ const dynamodb = new AWS.DynamoDB.DocumentClient();
 async function createAuction(event, context) {
   const now = new Date();
   const endDate = new Date();
+  // get info  about the user 
+  const { email } = event.requestContext.authorizer;
+
   endDate.setHours(now.getHours() + 1);
 
   // dont need JSON parse since we are using middleware
@@ -26,9 +29,11 @@ async function createAuction(event, context) {
     status: "OPEN",
     createdAt: now.toISOString(),
     endingAt: endDate.toISOString(),
+    pictureUrl: '',
     highestBid: {
       amount: 0,
     },
+    seller: email,
   };
   // insert to table
 

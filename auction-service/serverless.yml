@@ -15,14 +15,28 @@ provider:
     # Pass to the javascript code the value of the table 
     # serverless-pseudo-parameters allows to do templating 
     AUCTIONS_TABLE_NAME: ${self:custom.AuctionsTable.name}
+    # Pass the URL for mail services 
+    MAIL_QUEUE_URL: ${self:custom.MailQueue.url}
+    # Bucket Name 
+    AUCTIONS_BUCKET_NAME: ${self:custom.AuctionsBucket.name}
   # IAM role statememnts to allow to write in DB
   iamRoleStatements:
+    #  Allow table statements and CRUD operations 
     - ${file(iam/AuctionsTableIAM.yml):AuctionsTableIAM}
+    # Allow messaging service 
+    - ${file(iam/MailQueueIAM.yml):MailQueueIAM}
+    # S3 buclet IAM policyt
+    - ${file(iam/AuctionsBucketIAM.yml):AuctionsBucketIAM}
+
 
 resources:
   Resources:
     # Resource for the table 
     AuctionsTable: ${file(resources/AuctionsTable.yml):AuctionsTable}
+    # S3 Bucket 
+    AuctionsBucket: ${file(resources/AuctionsBucket.yml):AuctionsBucket}
+    AuctionsBucketPolicy: ${file(resources/AuctionsBucket.yml):AuctionsBucketPolicy}
+
 
 functions:
   createAuction:
@@ -49,7 +63,7 @@ functions:
           method: GET
           path: /auction/{id}
           authorizer: ${self:custom.authorizer}
-
+  
   placeBid:
     handler: src/handlers/placeBid.handler
     events:
@@ -57,13 +71,22 @@ functions:
           method: PATCH
           path: /auction/{id}/bid
           authorizer: ${self:custom.authorizer}
-          
+  
   processAuctions:
     handler: src/handlers/processAuctions.handler
-    #events:
+    events:
       # run evry minute in eventbridge
-     # - schedule: rate(1 minute)
-          
+     - schedule: rate(1 minute)
+
+  uploadAuctionPicture:
+    handler: src/handlers/uploadAuctionPicture.handler
+    events:
+      - http:
+          method: PATCH
+          path: /auction/{id}/picture
+          authorizer: ${self:custom.authorizer}
+  
+
           
 
 custom:
@@ -74,5 +97,13 @@ custom:
     name: !Ref AuctionsTable
     #  Get arn of the table
     arn: !GetAtt AuctionsTable.Arn  
+  # Pooling Mail queue 
+  MailQueue:
+    # Pick up fro cloud formations cf - cloud formations
+    arn: ${cf:notification-service-${self:provider.stage}.MailQueueArn}
+    url: ${cf:notification-service-${self:provider.stage}.MailQueueUrl}
+  AuctionsBucket:
+  # S3 bucket name 
+    name: auctinos-bucket-ddzmitry-${self:provider.stage}  
   bundle:
     linting: false

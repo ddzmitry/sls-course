@@ -1,0 +1,6 @@
+AuctionsBucketIAM:
+  Effect: Allow
+  Action:
+    - s3:PutObject
+  # Allow put on all resources for the / path in the bucket 
+  Resource: arn:aws:s3:::${self:custom.AuctionsBucket.name}/*   
